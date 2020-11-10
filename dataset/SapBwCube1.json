@@ -1,0 +1,18 @@
+{
+	"name": "SapBwCube1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AGROSUPER BWP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"MES": {
+				"type": "string",
+				"defaultValue": "10.2020"
+			}
+		},
+		"annotations": [],
+		"type": "SapBwCube",
+		"schema": []
+	}
+}
