@@ -1,0 +1,176 @@
+{
+	"name": "pipeline1_SQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapBwSource",
+						"query": "SELECT\n\t{ [Measures].[624IRRSR9LDUKATCSQOB0FZHM],\n\t[Measures].[624IRRSR9LDUKATCSQOB0GIGA] } ON COLUMNS,\n\tNON EMPTY\n\t{ [ZPER_GTO].[LEVEL01].MEMBERS,\n\t[ZITCSTCEN__ZPMC011].[LEVEL01].MEMBERS,\n\t[0PLANT].[LEVEL01].MEMBERS } ON ROWS\nFROM ZPM_MC02/ZPM_MC02_Q002_BCST"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "[ZPER_GTO].[LEVEL01].[MEMBER_CAPTION]",
+									"type": "String"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "String",
+									"ordinal": 1
+								}
+							},
+							{
+								"source": {
+									"name": "[ZITCSTCEN__ZPMC011].[LEVEL01].[MEMBER_CAPTION]",
+									"type": "String"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "String",
+									"ordinal": 2
+								}
+							},
+							{
+								"source": {
+									"name": "[0PLANT].[LEVEL01].[MEMBER_CAPTION]",
+									"type": "String"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "String",
+									"ordinal": 3
+								}
+							},
+							{
+								"source": {
+									"name": "[Measures].[624IRRSR9LDUKATCSQOB0FZHM]",
+									"type": "Decimal"
+								},
+								"sink": {
+									"type": "Decimal",
+									"physicalType": "Decimal",
+									"ordinal": 4
+								}
+							},
+							{
+								"source": {
+									"name": "[Measures].[624IRRSR9LDUKATCSQOB0GIGA]",
+									"type": "Decimal"
+								},
+								"sink": {
+									"type": "Decimal",
+									"physicalType": "Decimal",
+									"ordinal": 5
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SapBwCube1",
+						"type": "DatasetReference",
+						"parameters": {
+							"MES": "10.2020"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Archivo1",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Archivo1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AZURE_SQL",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
