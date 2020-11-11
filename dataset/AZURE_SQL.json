@@ -9,7 +9,8 @@
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "PRIMERA_TABLA"
+			"schema": "dbo",
+			"table": "tabla_pm"
 		}
 	}
 }
