@@ -10,6 +10,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('actividadescrm_',formatDatetime(utcnow(),'yyyy-MM-dd'),'.txt')",
+					"type": "Expression"
+				},
 				"container": "contenedor-akt"
 			},
 			"columnDelimiter": ",",
